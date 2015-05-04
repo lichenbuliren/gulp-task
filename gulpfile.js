@@ -39,20 +39,20 @@ var paths = {
 // Styles
 gulp.task('styles', function() {
     // 编译scss
-    // gulp.src('src/css/*.scss')
-    //     .pipe(sass({
-    //         style: 'expanded'
-    //     }))
-    //     .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    //     .pipe(gulp.dest('assets/css'))
-    //     .pipe(rename({
-    //         suffix: '.min'
-    //     }))
-    //     .pipe(minifycss())
-    //     .pipe(gulp.dest('assets/css'))
-    //     .pipe(notify({
-    //         message: 'Styles task complete'
-    //     }));
+    gulp.src('src/css/*.scss')
+        .pipe(sass({
+            style: 'expanded'
+        }))
+        .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+        .pipe(gulp.dest('assets/css'))
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(minifycss())
+        .pipe(gulp.dest('assets/css'))
+        .pipe(notify({
+            message: 'Styles task complete'
+        }));
     // 清空原有数据
     del(['assets/css/*.css'], function(err) {
         if (err) {

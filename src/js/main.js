@@ -1,4 +1,5 @@
 (function($, GLOBAL, Util) {
+
     var SKUResult = {};
     var Main = {
         init: function() {
