@@ -1,0 +1,20 @@
+/* RESET*/
+html,body,div,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,p,blockquote,fieldset,input,abbr,article,aside,command,details,figcaption,figure,footer,header,hgroup,mark,meter,nav,output,progress,section,summary,time {margin: 0; padding: 0; }
+h1,h2,h3,h4,h5,h6,pre,code,address,caption,cite,code,em,strong,th,figcaption {font-size: 1em; font-weight: normal; font-style: normal; }
+fieldset,iframe {border: none; margin: 0;padding: 0;}
+caption,th {text-align: left; }
+table {border-collapse: collapse; border-spacing: 0; }
+article,aside,footer,header,hgroup,nav,section,figure,figcaption {display: block; }
+html, body {width: 100%;height: 100%; }
+html {background-color:#fff; }
+img {border: 0; }
+a {text-decoration: none;color: #515151; }
+i {font-style: normal;}
+ul, li {list-style: none; }
+body {font-family: "微软雅黑","Microsoft Yahei",Arial,Helvetica,sans-serif,"宋体";font-size: 14px;color: #515151; }
+button, input {font-family: "微软雅黑","Microsoft Yahei",Arial,Helvetica,sans-serif,"宋体";}
+.clearfix:after, .clearfix:before {content: "";display: table;height: 0px;clear: both;visibility: hidden;}
+.clearfix{ *zoom:1; }
+.fl { float: left; }
+.fr { float: right; }
+.br0 { border: none; }
