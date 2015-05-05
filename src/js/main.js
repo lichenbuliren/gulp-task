@@ -303,7 +303,7 @@
                 content_active: 'active'
             });
 
-            $('.content').on('click', '.property', function() {
+            $('#goods-list .content').on('click', '.property', function() {
                 var $this = $(this),
                     $parentContent = $this.parents('.content'),
                     gid = $parentContent.data('gid'),
@@ -367,7 +367,7 @@
                 }
             });
 
-            var $propParents = $('.content dl').not('.disabled');
+            var $propParents = $('#goods-list .content dl').not('.disabled');
             $propParents.on('mouseover mouseout', '.property', function(event) {
                 if (event.type == 'mouseover') {
                     $(this).addClass('hover');
@@ -407,7 +407,7 @@
          * 组装数据格式
          * @return {[type]} [description]
          */
-        caulateGoodsInfo: function(data) {
+        caculateGoodsInfo: function(data) {
             var result = [],
                 extList = data.ext_list;
             result = data.goods_list;
@@ -463,7 +463,6 @@
     }
 
     $(document).ready(function() {
-        Main.init();
         Main.bindEvent();
     });
 
