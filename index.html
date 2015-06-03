@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="icon" href="/favicon.ico" /> -->
+    <title>M码购买</title>
+    <link rel="stylesheet" href="./src/css/base.css">
+    <link rel="stylesheet" href="./src/css/main.css">
+    <script type="text/javascript" src="./src/js/jquery-1.11.2.js"></script>
+    <script type="text/javascript" src="./src/js/tab-1.0.0.js"></script>
+    <script type="text/javascript" src="./src/js/util.js"></script>
+    <script type="text/javascript" src="./src/js/global.js"></script>
+    <script type="text/javascript" src="./src/js/main.js"></script>
+</head>
+<body>
+<div class="login-wrap">
+    <form rel="mcode" data-api="http://store-server.meizu.com/mcode" action="" class="mcode-form">
+        <h1>M码购买</h1>
+        <div class="row">
+            <input name="mcodeid" class="form-input" type="text" placeholder="请输入M码">
+            <div class="tips"></div>
+        </div>
+        <div class="row">
+            <input name="captcha" class="form-input" type="text" placeholder="请输入验证码">
+            <div class="tips"></div>
+        </div>
+        <div class="row">
+            <a class="captcha" href="javascript:;">
+                <img class="captcha-img" src="http://store-server.meizu.com/captcha/get?len=4" alt="验证码" title="请输入验证码" width="100" height="40">换一张
+            </a>
+        </div>
+        <input type="hidden" name="is_data" value="1">
+        <div class="row">
+            <input class="btn-submit" type="submit" value="下一步">
+        </div>
+    </form>
+</div>
+<div class="goods-list" id="goods-list"></div>
+<script type="text/html" id="tpl-goods-list">
+    <%
+        var goodsList = data;
+    %>
+    <ul class="nav clearfix">
+    <% for(var i=0;i<goodsList.length;i++){%>
+        <% var curGoods = goodsList[i];%>
+        <li class="item<%= i==0?' active':''%>">
+            <a class="goods-type" data-gid="<%= curGoods['gid']%>" href="javascript:;" title="<%= curGoods['name']%>"><%= goodsList[i]['name']%></a>
+        </li>
+    <%}%>
+    </ul>
+    <div class="container">
+        <% for(var i=0;i<goodsList.length;i++){%>
+        <%
+            var curGoods = goodsList[i],
+                curGoodsAttr = curGoods['attrList'],
+                curExtArr = curGoods['data'];
+            var props = curGoods['aids'];
+        %>
+        <div data-gid="<%= curGoods['gid']%>" class="content cleafix<%= i==0?' active':''%>">
+            <a href="javasript:;" class="img-thumbnail"><img src="<%= curGoods['img_url']%>" width="278" height="426" title="<%= curGoods['name']%>" alt="<%= curGoods['name']%>"></a>
+            <div class="props">
+            <% for(var j=0,len = props.length;j < len;j++){%>
+                <%
+                var aid = props[j],
+                    curAttr = curGoodsAttr[aid],
+                    curAid = curAttr['aid'],
+                    curAttrName = curAttr['aname'],
+                    curExtList = curAttr['extList'],
+                    titleObj = {
+                        '颜色':'选择颜色',
+                        '容量':'选择容量',
+                        '网络制式':'选择版本'
+                    },
+                    title = titleObj[curAttrName];
+                %>
+                <dl data-aid="<%= aid%>" class="<%= j!=0?'disabled':''%>">
+                    <dt class="title"><em><%= j+1 %></em>选择<%= title%></dt>
+                    <dd class="clearfix">
+                    <% for(vid in curExtList){%>
+                    <%
+                        var curExt = curExtList[vid];
+                    %>
+                        <div class="property" data-vid="<%=vid%>"><%= curExt%></div>
+                    <%}%>
+                    </dd>
+                </dl>
+            <%}%>
+            <div class="price"></div>
+            </div>
+        </div>
+        <%}%>
+    </div>
+</script>
+</body>
+</html>

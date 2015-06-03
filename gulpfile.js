@@ -7,7 +7,6 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
-    jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     imagemin = require('gulp-imagemin'),
     rename = require('gulp-rename'),
@@ -17,7 +16,9 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     clean = require('gulp-clean'),
     rev = require('gulp-rev'),
-    del = require('del');
+    del = require('del'),
+    revCollector = require('gulp-rev-collector'),
+    minifyHTML = require('gulp-minify-html');
 
 /**
  * 指定合并文件路径和顺序
@@ -26,9 +27,11 @@ var gulp = require('gulp'),
 var paths = {
     frontend: {
         scripts: [
+            'src/js/jquery-1.11.2.js',
             'src/js/util.js',
             'src/js/global.js',
-            'src/js/main.js'
+            'src/js/main.js',
+            'src/js/tab-1.0.0.js'
         ],
         styles: [
             'src/css/base.css',
@@ -49,44 +52,37 @@ gulp.task('styles', function() {
             suffix: '.min'
         }))
         .pipe(minifycss())
-        .pipe(gulp.dest('assets/css'))
-        .pipe(notify({
-            message: 'Styles task complete'
-        }));
-    // 清空原有数据
-    del(['assets/css/*.css'], function(err) {
-        if (err) {
-            console.log('清空样式出错！');
-            return false;
-        }
+        .pipe(gulp.dest('assets/css'));
 
-    });
     gulp.src(paths.frontend.styles)
         .pipe(concat('main.css'))
+        .pipe(gulp.dest('assets/css/'))
         // 打版本补丁
-        // .pipe(rev())
-        .pipe(minifycss())
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest('assets/css/'));
+        .pipe(minifycss())
+        .pipe(rev())
+        .pipe(gulp.dest('assets/css/'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('rev/css'))
+        .pipe(livereload())
+        .pipe(notify("styles task completed!"));
 });
 // Scripts
 gulp.task('scripts', function() {
-    del(['assets/js/*.js'],function(err){
-        if(err){
-            console.log(err);
-        }
-    });
     gulp.src(paths.frontend.scripts)
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
+        .pipe(gulp.dest('assets/js'))
         .pipe(rename({
             suffix: '.min'
         }))
         .pipe(uglify())
+        .pipe(rev())
         .pipe(gulp.dest('assets/js'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('rev/js'))
+        .pipe(livereload())
         .pipe(notify({
             message: 'Scripts task complete'
         }));
@@ -94,24 +90,39 @@ gulp.task('scripts', function() {
 // Images
 gulp.task('images', function() {
     return gulp.src('src/images/*')
-        .pipe(cache(imagemin({
-            optimizationLevel: 3,
-            progressive: true,
-            interlaced: true
-        })))
+        // .pipe(cache(imagemin({
+        //     optimizationLevel: 3,
+        //     progressive: true,
+        //     interlaced: true
+        // })))
         .pipe(gulp.dest('assets/images'))
+        .pipe(livereload())
         .pipe(notify({
             message: 'Images task complete'
         }));
 });
 
+gulp.task('html',function(){
+    return gulp.src(['rev/**/*.json','index.html'])
+        .pipe(revCollector({
+            replaceReved: true,
+            dirReplacements:{
+                '/src/css': '/rev/css',
+                '/src/js':'/rev/js'
+            }
+        }))
+        .pipe(livereload())
+        .pipe(gulp.dest('assets/'));
+});
+
 gulp.task('clean', function() {
-  return gulp.src(['assets/css', 'assets/js', 'assets/images'], {read: false})
+  return gulp.src(['assets/**/*', 'rev/**/*'], {read: false})
     .pipe(clean());
 });
+
 // Default task
-gulp.task('default',['clean'], function() {
-    gulp.start('styles', 'scripts', 'images');
+gulp.task('build',['clean'], function() {
+    gulp.start('styles', 'scripts', 'images','html');
 });
 // Watch
 gulp.task('watch', function() {
@@ -120,7 +131,7 @@ gulp.task('watch', function() {
     // Watch .js files
     gulp.watch('src/js/*.js', ['scripts']);
     // Watch image files
-    gulp.watch('src/images/*', ['images']);
+    // gulp.watch('src/images/*', ['images']);
     // Create LiveReload server
     livereload.listen();
     // Watch any files in assets/, reload on change
